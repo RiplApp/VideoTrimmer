@@ -28,6 +28,7 @@ class VideoTrimmerView @JvmOverloads constructor(context: Context, attrs: Attrib
 
     override fun initRootView() {
         LayoutInflater.from(context).inflate(R.layout.video_trimmer, this, true)
+        getRangeSeekBarView().setThumbColor( 0xffff0000.toInt() )
         fab.setOnClickListener { initiateTrimming() }
     }
 
