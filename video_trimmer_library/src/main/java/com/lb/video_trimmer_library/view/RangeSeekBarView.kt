@@ -312,6 +312,11 @@ open class RangeSeekBarView @JvmOverloads constructor(context: Context, attrs: A
         listeners.add(listener)
     }
 
+    fun setThumbColor( aColor:Int ) {
+        edgePaint.color = aColor
+        strokePaint.color = aColor
+    }
+
     private fun onCreate(rangeSeekBarView: RangeSeekBarView, index: Int, value: Float) {
         listeners.forEach { item -> item.onCreate(rangeSeekBarView, index, value) }
     }
