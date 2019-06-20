@@ -75,6 +75,7 @@ abstract class BaseVideoTrimmerView @JvmOverloads constructor(
     private var endPosition = 0
     private var originSizeFile: Long = 0
     private var resetSeekBar = true
+    private var wasPlaying = false
     private val messageHandler = MessageHandler(this)
 
     init {
@@ -238,7 +239,9 @@ abstract class BaseVideoTrimmerView @JvmOverloads constructor(
         }
         videoView.layoutParams = lp
         playView.visibility = View.VISIBLE
+        mp.isLooping = true
         duration = videoView.duration
+        endPosition = calculateEndPositionWithMinAndMax()
         setSeekBarPosition()
         onRangeUpdated(startPosition, endPosition)
         onVideoPlaybackReachingTime(0)
@@ -247,7 +250,6 @@ abstract class BaseVideoTrimmerView @JvmOverloads constructor(
     }
 
     private fun setSeekBarPosition() {
-        endPosition = calculateEndPositionWithMinAndMax()
         rangeSeekBarView.setThumbValue(0, getValueForTimeInMilliseconds(startPosition))
         rangeSeekBarView.setThumbValue(1, getValueForTimeInMilliseconds(endPosition))
         setProgressBarPosition(startPosition)
@@ -284,10 +286,17 @@ abstract class BaseVideoTrimmerView @JvmOverloads constructor(
         when (index) {
             RangeSeekBarView.ThumbType.LEFT.index -> {
                 startPosition = (duration * value / 100L).toInt()
+                if (videoView.isPlaying)
+                    wasPlaying = true
+                    videoView.pause()
                 videoView.seekTo(startPosition)
             }
             RangeSeekBarView.ThumbType.RIGHT.index -> {
                 endPosition = (duration * value / 100L).toInt()
+                if (videoView.isPlaying)
+                    wasPlaying = true
+                    videoView.pause()
+                videoView.seekTo(endPosition)
             }
         }
         setProgressBarPosition(startPosition)
@@ -298,7 +307,12 @@ abstract class BaseVideoTrimmerView @JvmOverloads constructor(
 
     open fun onStopSeekThumbs() {
         messageHandler.removeMessages(SHOW_PROGRESS)
-        pauseVideo()
+        if (wasPlaying) {
+            playVideo()
+        }
+        else {
+            pauseVideo()
+        }
     }
 
     private fun onVideoCompleted() {
@@ -318,7 +332,8 @@ abstract class BaseVideoTrimmerView @JvmOverloads constructor(
     private fun updateVideoProgress(time: Int) {
         if (time >= endPosition) {
             messageHandler.removeMessages(SHOW_PROGRESS)
-            pauseVideo()
+            setSeekBarPosition()
+            onRangeUpdated(startPosition, endPosition)
             resetSeekBar = true
             return
         }
@@ -329,7 +344,13 @@ abstract class BaseVideoTrimmerView @JvmOverloads constructor(
     @Suppress("MemberVisibilityCanBePrivate")
     fun pauseVideo() {
         videoView.pause()
+        wasPlaying = false
         playView.visibility = View.VISIBLE
+    }
+
+    fun playVideo() {
+        videoView.start()
+        playView.visibility = View.GONE
     }
 
     private fun setProgressBarPosition(position: Int) {
