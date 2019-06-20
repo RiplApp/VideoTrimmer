@@ -307,12 +307,10 @@ abstract class BaseVideoTrimmerView @JvmOverloads constructor(
 
     open fun onStopSeekThumbs() {
         messageHandler.removeMessages(SHOW_PROGRESS)
-        if (wasPlaying)
-        {
+        if (wasPlaying) {
             playVideo()
         }
-        else
-        {
+        else {
             pauseVideo()
             playView.visibility = View.VISIBLE
         }
