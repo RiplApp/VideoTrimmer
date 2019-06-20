@@ -312,7 +312,6 @@ abstract class BaseVideoTrimmerView @JvmOverloads constructor(
         }
         else {
             pauseVideo()
-            playView.visibility = View.VISIBLE
         }
     }
 
