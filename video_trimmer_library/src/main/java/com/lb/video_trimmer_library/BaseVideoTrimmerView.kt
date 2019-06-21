@@ -209,13 +209,11 @@ abstract class BaseVideoTrimmerView @JvmOverloads constructor(
             messageHandler.removeMessages(SHOW_PROGRESS)
             pauseVideo()
         } else {
-            playView.visibility = View.GONE
             if (resetSeekBar) {
                 resetSeekBar = false
                 videoView.seekTo(startPosition)
             }
-            messageHandler.sendEmptyMessage(SHOW_PROGRESS)
-            videoView.start()
+            playVideo()
         }
     }
 
@@ -286,16 +284,18 @@ abstract class BaseVideoTrimmerView @JvmOverloads constructor(
         when (index) {
             RangeSeekBarView.ThumbType.LEFT.index -> {
                 startPosition = (duration * value / 100L).toInt()
-                if (videoView.isPlaying)
+                if (videoView.isPlaying) {
                     wasPlaying = true
                     videoView.pause()
+                }
                 videoView.seekTo(startPosition)
             }
             RangeSeekBarView.ThumbType.RIGHT.index -> {
                 endPosition = (duration * value / 100L).toInt()
-                if (videoView.isPlaying)
+                if (videoView.isPlaying) {
                     wasPlaying = true
                     videoView.pause()
+                }
                 videoView.seekTo(endPosition)
             }
         }
@@ -306,7 +306,6 @@ abstract class BaseVideoTrimmerView @JvmOverloads constructor(
     }
 
     open fun onStopSeekThumbs() {
-        messageHandler.removeMessages(SHOW_PROGRESS)
         if (wasPlaying) {
             playVideo()
         }
@@ -343,12 +342,14 @@ abstract class BaseVideoTrimmerView @JvmOverloads constructor(
 
     @Suppress("MemberVisibilityCanBePrivate")
     fun pauseVideo() {
+        messageHandler.removeMessages(SHOW_PROGRESS)
         videoView.pause()
         wasPlaying = false
         playView.visibility = View.VISIBLE
     }
 
     fun playVideo() {
+        messageHandler.sendEmptyMessage(SHOW_PROGRESS)
         videoView.start()
         playView.visibility = View.GONE
     }
