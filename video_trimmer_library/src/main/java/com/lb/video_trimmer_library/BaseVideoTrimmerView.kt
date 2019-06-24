@@ -239,7 +239,7 @@ abstract class BaseVideoTrimmerView @JvmOverloads constructor(
         playView.visibility = View.VISIBLE
         mp.isLooping = true
         duration = videoView.duration
-        endPosition = calculateEndPositionWithMinAndMax()
+        endPosition = getInitialEndPosition()
         setSeekBarPosition()
         onRangeUpdated(startPosition, endPosition)
         onVideoPlaybackReachingTime(0)
@@ -257,6 +257,18 @@ abstract class BaseVideoTrimmerView @JvmOverloads constructor(
         val theMinWidth = getValueForTimeInMilliseconds(minDurationInMs)
         rangeSeekBarView.initMaxWidth(theMaxWidth)
         rangeSeekBarView.initMinWidth(theMinWidth)
+    }
+
+    private fun getInitialEndPosition(): Int {
+        if ( endPosition != 0 ) {
+            if (endPosition <= maxDurationInMs) {
+                return endPosition
+            } else {
+                return maxDurationInMs
+            }
+        } else {
+            return calculateEndPositionWithMinAndMax()
+        }
     }
 
     private fun calculateEndPositionWithMinAndMax(): Int {
@@ -433,6 +445,11 @@ abstract class BaseVideoTrimmerView @JvmOverloads constructor(
         videoView.setVideoURI(src)
         videoView.requestFocus()
         timeLineView.setVideo(src!!)
+    }
+
+    fun setInitialStartAndEndPosition(startTimeInMs: Int, endTimeInMs: Int) {
+        startPosition = startTimeInMs
+        endPosition = endTimeInMs
     }
 
     private class MessageHandler internal constructor(view: BaseVideoTrimmerView) : Handler() {
