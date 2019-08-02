@@ -237,7 +237,6 @@ abstract class BaseVideoTrimmerView @JvmOverloads constructor(
         }
         videoView.layoutParams = lp
         playView.visibility = View.VISIBLE
-        mp.isLooping = true
         duration = videoView.duration
         endPosition = getInitialEndPosition()
         setSeekBarPosition()
@@ -328,6 +327,14 @@ abstract class BaseVideoTrimmerView @JvmOverloads constructor(
 
     private fun onVideoCompleted() {
         videoView.seekTo(startPosition)
+        if( wasPlaying )
+        {
+            playVideo()
+        }
+        else
+        {
+            pauseVideo()
+        }
     }
 
     private fun notifyProgressUpdate(all: Boolean) {
