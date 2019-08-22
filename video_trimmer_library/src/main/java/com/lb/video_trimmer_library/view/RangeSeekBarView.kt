@@ -86,7 +86,8 @@ open class RangeSeekBarView @JvmOverloads constructor(context: Context, attrs: A
         ).toInt().coerceAtLeast(1)
 
     fun initMaxWidth(aMaxWidth: Float) {
-        maxWidth = aMaxWidth * pixelRangeMax / 100
+        val pxThumb = (100 - aMaxWidth) * thumbWidth / 100
+        maxWidth = aMaxWidth * pixelRangeMax / 100 + pxThumb
     }
 
     fun initMinWidth(aMinWidth: Float) {
@@ -95,7 +96,7 @@ open class RangeSeekBarView @JvmOverloads constructor(context: Context, attrs: A
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-        viewWidth=measuredWidth
+        viewWidth = measuredWidth
         pixelRangeMin = 0f
         pixelRangeMax = (viewWidth - thumbWidth).toFloat()
         if (firstRun) {
@@ -180,7 +181,7 @@ open class RangeSeekBarView @JvmOverloads constructor(context: Context, attrs: A
                 val dx = coordinate - mThumb.lastTouchX
                 val newX = mThumb.pos + dx
                 when {
-                    currentThumb == 0 -> when {
+                    currentThumb == ThumbType.LEFT.index -> when {
                         newX + thumbWidth + minWidth >= mThumb2.pos -> mThumb.pos = mThumb2.pos - thumbWidth - minWidth
                         newX <= pixelRangeMin -> mThumb.pos = pixelRangeMin
                         else -> {
@@ -219,8 +220,10 @@ open class RangeSeekBarView @JvmOverloads constructor(context: Context, attrs: A
                 setThumbPos(ThumbType.RIGHT.index, thumbRight.pos)
             }
         } else if (!isLeftMove && dx > 0) {
-            if (thumbRight.pos + dx - thumbLeft.pos > maxWidth) {
-                thumbLeft.pos = thumbRight.pos + dx - maxWidth
+            val theNextThumbRightPos = thumbRight.pos + dx
+            if (theNextThumbRightPos - thumbLeft.pos > maxWidth) {
+                val theAfterLeftThumbPos = theNextThumbRightPos - maxWidth
+                thumbLeft.pos = theAfterLeftThumbPos
                 setThumbPos(ThumbType.LEFT.index, thumbLeft.pos)
             }
         }
@@ -310,7 +313,7 @@ open class RangeSeekBarView @JvmOverloads constructor(context: Context, attrs: A
         listeners.add(listener)
     }
 
-    fun setThumbColor( aColor:Int ) {
+    fun setThumbColor(aColor: Int) {
         edgePaint.color = aColor
         strokePaint.color = aColor
     }
