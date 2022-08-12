@@ -1,6 +1,7 @@
 package com.lb.video_trimmer_sample
 
 import android.content.Intent
+import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
@@ -61,7 +62,7 @@ class TrimmerActivity : AppCompatActivity(), VideoTrimmingListener {
         Toast.makeText(this@TrimmerActivity, "error while previewing video", Toast.LENGTH_SHORT).show()
     }
 
-    override fun onVideoPrepared() {
+    override fun onVideoPrepared(mp: MediaPlayer) {
         //        Toast.makeText(TrimmerActivity.this, "onVideoPrepared", Toast.LENGTH_SHORT).show();
     }
 }
