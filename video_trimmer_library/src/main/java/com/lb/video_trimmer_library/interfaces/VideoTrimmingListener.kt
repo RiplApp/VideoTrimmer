@@ -23,12 +23,13 @@
  */
 package com.lb.video_trimmer_library.interfaces
 
+import android.media.MediaPlayer
 import android.net.Uri
 import androidx.annotation.UiThread
 
 interface VideoTrimmingListener {
     @UiThread
-    fun onVideoPrepared()
+    fun onVideoPrepared(mp: MediaPlayer)
 
     @UiThread
     fun onTrimStarted()

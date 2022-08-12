@@ -243,7 +243,7 @@ abstract class BaseVideoTrimmerView @JvmOverloads constructor(
         onRangeUpdated(startPosition, endPosition)
         onVideoPlaybackReachingTime(0)
         if (videoTrimmingListener != null)
-            videoTrimmingListener!!.onVideoPrepared()
+            videoTrimmingListener!!.onVideoPrepared(mp)
     }
 
     private fun setSeekBarPosition() {
